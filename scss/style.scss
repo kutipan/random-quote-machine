@@ -82,12 +82,12 @@ blockquote > cite {
 	justify-content: space-between;
 	margin-top: 20px;
 
-	> button, > a {
+	> .update-btn, > a {
 		width: $button-size;
 		height: $button-size;
 		border-radius: 50%;
-		border: 1px solid gray;
-		background-color: rgba(208, 255, 210, 0.59);
+		border: 1px solid transparent;
+		background: none;
 		transition: 0.1s border-width;
 
 		&:first-child {
@@ -99,7 +99,7 @@ blockquote > cite {
 		}
 
 		&:active {
-			border: 4px solid gray;
+			border-width: 4px;
 		}
 
 		> img {
@@ -110,10 +110,10 @@ blockquote > cite {
 }
 
 .update-btn {
-	background: rgba(54, 160, 54, 0.29);
+	stroke: $text-color;
 
 	&.on {
-		border: 4px solid gray;
+		border-width: 4px;
 	}
 }
 
@@ -137,9 +137,10 @@ blockquote > cite {
 
 .share-twitter {
 	padding: 6px;
-}
+	stroke: $text-color;
+	fill: none;
 
-// REMOVE for production
-div, p, span, cite, blockquote, svg {
-	outline: 1px dotted black;
+	&:hover {
+		fill: $text-color;
+	}
 }
