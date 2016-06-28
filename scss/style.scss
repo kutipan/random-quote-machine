@@ -1,0 +1,28 @@
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+button::-moz-focus-inner {
+	border: none;
+}
+
+
+html {
+	font-size: 16px;
+}
+
+body {
+	min-height: 100vh;
+	margin: 0;
+	background-color: $body-color;
+}
+
+.quote-wrapper {
+	min-height: 500px;
+	width: 500px;
+	margin: 5% auto 50px;
+	display: flex;
+	justify-content: space-between;
+	flex-flow: column nowrap;
+}
+
