@@ -2,3 +2,15 @@ extend partials/layout
 
 block content
 	.quote-wrapper
+		.quote
+			blockquote
+				p.
+					I have come to believe that the whole world is an enigma, a harmless enigma that is made terrible by our own mad attempt to interpret it as though it had an underlying truth.
+				cite Umberto Eco
+		hr
+		
+		.buttons
+			a.share-twitter(href="#"): img(src="images/twitter.svg", alt="share on twitter")
+					
+			button.update-btn(type="button", id="update"): img.rotating(src="images/reload-rotate.svg", alt="new quote")
+			

@@ -27,20 +27,17 @@ const dist = {
 };
 
 // Static Server + watching scss/jade files
-gulp.task('serve', ['sass', 'jade', 'javascript', 'images', 'audio'], function() {
+gulp.task('serve', ['sass', 'jade', 'javascript', 'images'], function() {
 	browserSync.init({
 		server: {
 			baseDir: dist.base
-		}
+		},
+		browser: "chromium-browser"
 	});
 
 	gulp.watch([src.scss, src.scssPartials], ['sass']);
 	gulp.watch([src.jade, src.jadePartials], ['jade']);
 	gulp.watch(src.js, ['javascript']);
-});
-
-gulp.task('clean', function(){
-	return del('dist');
 });
 
 
@@ -65,7 +62,7 @@ gulp.task('jade', function() {
 		.pipe(browserSync.stream({once: true}));
 });
 
-// Concat all jscripts, keeping non-hoisted classes declarations first
+// Concat all jscripts
 gulp.task('javascript', function() {
 	return gulp.src(src.js)
 		.pipe(sourcemaps.init())
@@ -85,4 +82,3 @@ gulp.task('images', function () {
 
 
 gulp.task('default', ['serve']);
-
