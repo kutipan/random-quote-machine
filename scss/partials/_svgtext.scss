@@ -13,15 +13,11 @@ $text-size: 2.7rem;
 		// stroke: black;
 		stroke-width: 2px;
 		font-family: CamBam-5;
-
-		&.dynamic {
-			stroke-dasharray: 9em;
-			stroke-dashoffset: 9em;
-		}
-
 	}
 
 	text.animated {
+		stroke-dasharray: 9em;
+		stroke-dashoffset: 9em;
 
 		> tspan {
 			animation: 0.7s linear 1 forwards dash;

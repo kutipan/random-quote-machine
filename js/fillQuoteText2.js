@@ -1,4 +1,4 @@
-let outputTxt = document.getElementById("output");
+let dynamicTxt = document.getElementById("dynamic-output");
 let staticTxt = document.getElementById("static-output");
 let svgOut = document.getElementById("svg-output");
 
@@ -63,12 +63,12 @@ function addToOutput(tspan) {
 		tspan.setAttribute("x", secondChar !== "\n" && secondChar !== " " ? 0 : spaceWidthShift || -11);
 		tspan.setAttribute("dy", "1em");
 		//tspan.textContent = tspan.textContent.replace("\n", "");
-		console.log(outputTxt.children);
-		console.log(tspan, "second", tspan === outputTxt.children[1]);
+		// console.log(dynamicTxt.children);
+		// console.log(tspan, "second", tspan === dynamicTxt.children[1]);
 		tspan.firstInLine = true;
 	}
-	//console.log("before", outputTxt.clientWidth);
-	outputTxt.appendChild(tspan);
+	//console.log("before", dynamicTxt.clientWidth);
+	dynamicTxt.appendChild(tspan);
 	if(!spaceWidthShift && wordStartTspan ) {
 		//spaceWidthShift || (spaceWidthShift = -wordStartTspan.getSubStringLength(0,1))
 		try {
@@ -78,11 +78,11 @@ function addToOutput(tspan) {
 			console.log("Error", e.message);
 		}
 	}
-	//console.log("after", outputTxt.clientWidth);
-	if(outputTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
+	//console.log("after", dynamicTxt.clientWidth);
+	if(dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
 		console.log("\\n");
-		//console.log("svgWidth", svgWidth, ", rect width", outputTxt.getBoundingClientRect().width, ", rect width--", outputTxt.getBoundingClientRect().width + (spaceWidthShift || -11));
-		console.log("wst", wordStartTspan);
+		//console.log("svgWidth", svgWidth, ", rect width", dynamicTxt.getBoundingClientRect().width, ", rect width--", dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || -11));
+		// console.log("wst", wordStartTspan);
 		wordStartTspan.setAttribute("x", spaceWidthShift || -11);
 		wordStartTspan.setAttribute("dy", "1em");
 		wordStartTspan.firstInLine = true;
@@ -92,12 +92,12 @@ function addToOutput(tspan) {
 }
 
 function resizeSvgOutToFit() {
-	console.log("resizing to", staticTxt.getBBox().height, "+", outputTxt.getBBox().height, "+ 12px = ", staticTxt.getBBox().height + outputTxt.getBBox().height + 12 + "px");
-	svgOut.style.height = staticTxt.getBBox().height + outputTxt.getBBox().height + 12 + "px";
+	console.log("resizing to", staticTxt.getBBox().height, "+", dynamicTxt.getBBox().height, "+ 12px = ", staticTxt.getBBox().height + dynamicTxt.getBBox().height + 12 + "px");
+	svgOut.style.height = staticTxt.getBBox().height + dynamicTxt.getBBox().height + 12 + "px";
 }
 
 
-outputTxt.addEventListener("animationend", onAnimationEnd);
+dynamicTxt.addEventListener("animationend", onAnimationEnd);
 let accum = document.querySelector("tspan.accum");
 let accumWordStart, finishedBefore = false;
 function onAnimationEnd({target}) {
@@ -126,7 +126,7 @@ function onAnimationEnd({target}) {
 			target.remove();
 		}
 
-		// if(outputTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
+		// if(dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
 		// 	console.log("break on", accumWordStart || (accum.getNumberOfChars()-1));
 		// 	const lastWord = accum.textContent.slice(accumWordStart || (accum.getNumberOfChars()-1));
 		// 	accumWordStart = null;
@@ -138,7 +138,7 @@ function onAnimationEnd({target}) {
 		//
 		// 	accum.textContent = accum.textContent.slice(0, -lastWord.length);
 		//
-		// 	outputTxt.insertBefore(nextAccum, accum.nextSibling);
+		// 	dynamicTxt.insertBefore(nextAccum, accum.nextSibling);
 		// 	//accum.insertAdjacentElement("afterend", nextAccum);	// to same effect
 		// 	//console.log("STATIC", accum.textContent);
 		// 	placeIntoStatic();
@@ -154,16 +154,16 @@ function onAnimationEnd({target}) {
 		//
 		// }
 
-		if(target === lastTspan && outputTxt.hasChildNodes()) {
+		if(target === lastTspan && dynamicTxt.hasChildNodes()) {
 			lastTspan = null;
 			placeIntoStatic();
 			accum = document.createElementNS(svgNS, "tspan");
 			accum.classList.add("accum");
 			//accum.setAttribute("dy", "1em");
-			if(staticTxt.hasChildNodes()) outputTxt.setAttribute("y", staticTxt.childElementCount + 1 + "em");
-			outputTxt.appendChild(accum);
+			if(staticTxt.hasChildNodes()) dynamicTxt.setAttribute("y", staticTxt.childElementCount + 1 + "em");
+			dynamicTxt.appendChild(accum);
 			finishedBefore = true;
-			console.log("outputTxt EMPTIED");
+			console.log("dynamicTxt EMPTIED");
 			onQuoteTextFilled();
 		}
 
@@ -191,28 +191,41 @@ function placeIntoStatic() {
 		finishedBefore = false;
 		accum.setAttribute("dy", "1em");
 	}
-	console.log("after accum", accum.nextSibling);
+	// console.log("after accum", accum.nextSibling);
 	staticTxt.appendChild(accum);
 	console.log("STATIC", accum);
-	console.log("STATIC children", staticTxt.childElementCount);
-	//const y = parseInt(outputTxt.getAttribute("y"), 10);
-	console.log("y", outputTxt.y.baseVal.length > 0 ? outputTxt.y.baseVal[0] : null);
-	outputTxt.setAttribute("y", staticTxt.childElementCount + "em");
-	console.log("y", outputTxt.y.baseVal.length > 0 ? outputTxt.y.baseVal[0] : null);
+	// console.log("STATIC children", staticTxt.childElementCount);
+	//const y = parseInt(dynamicTxt.getAttribute("y"), 10);
+	// console.log("y", dynamicTxt.y.baseVal.length > 0 ? dynamicTxt.y.baseVal[0] : null);
+	dynamicTxt.setAttribute("y", staticTxt.childElementCount + "em");
+	// console.log("y", dynamicTxt.y.baseVal.length > 0 ? dynamicTxt.y.baseVal[0] : null);
 }
 
 
 // const clearOutBtn = document.getElementById("clear-output");
 function emptyTextOutput() {
-	const clone = staticTxt.cloneNode(false);
+	let clone = staticTxt.cloneNode(false);
 
 	svgOut.replaceChild(clone, staticTxt);
 	staticTxt = clone;
-	outputTxt.setAttribute("y", "1em");
-	outputTxt.classList.remove("hidden", "animated");
+
+	clone = dynamicTxt.cloneNode(false);
+	clone.setAttribute("y", "1em");
+	clone.classList.remove("hidden", "animated");
+
+	accum = document.createElementNS(svgNS, "tspan");
+	accum.classList.add("accum");
+
+	clone.appendChild(accum);
+	clone.addEventListener("animationend", onAnimationEnd);
+	svgOut.replaceChild(clone, dynamicTxt);
+	dynamicTxt = clone;
 	//svgOut.removeChild(svgOut.firstChild);
 }
 
+function emptyQuote() {
+	emptyTextOutput();
+}
 // function recalcSvgWidth() {
 // 	console.log("re-width");
 // 	svgWidth = svgOut.getBoundingClientRect().width;
@@ -224,12 +237,6 @@ function emptyTextOutput() {
 // });
 
 
-// const addBtn = document.getElementById("add");
-const getQuote = document.getElementById("get-quote");
-getQuote.onclick = fillQuoteText;
-// addBtn.onclick = function() {
-// 	outputTspans(input.value, charAddFrequency, addToOutput, doneWithTspans);
-// };
 
 function doneWithTspans(lastOne) {
 	console.log("lastTspan", lastOne);
@@ -240,10 +247,10 @@ function doneWithTspans(lastOne) {
 }
 
 function startAnimations() {
-	outputTxt.classList.add("hidden", "animated");
+	dynamicTxt.classList.add("hidden", "animated");
 	console.log("STARTING ANIMATIONS");
 
-	let tspan = outputTxt.children[1];
+	let tspan = dynamicTxt.children[1];
 
 	quoteTextIntervalId = setInterval(startTspanAnimation, charAddFrequency);
 
@@ -285,10 +292,11 @@ function onQuoteFilled() {
 }
 
 function fillQuoteTextImmediately() {
-	clearInterval(quoteTextInterval);
+	clearInterval(quoteTextIntervalId);
 	// $output.text(inputStr);
 	// onQuoteTextFilled();
-	onQuoteFilled();
+	dynamicTxt.classList.remove("animated", "hidden");
+	onQuoteTextFilled();
 }
 
 
@@ -299,3 +307,20 @@ function fillQuoteTextImmediately() {
 // 		fillQuoteText();
 // 	}
 // });
+
+function fillQuote() {
+	if(quoteBeingFilled) {
+		fillQuoteTextImmediately();
+	} else {
+		emptyQuote();
+		fillQuoteText();
+	}
+}
+
+
+// const addBtn = document.getElementById("add");
+const getQuote = document.getElementById("get-quote");
+getQuote.onclick = fillQuote;
+// addBtn.onclick = function() {
+// 	outputTspans(input.value, charAddFrequency, addToOutput, doneWithTspans);
+// };
