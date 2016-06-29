@@ -52,6 +52,7 @@ blockquote {
 	flex-flow: column nowrap;
 	margin: 1em $inner-margin 2em;
 	color: $text-color;
+	stroke: $text-color;
 	font-family: 'Montaga', serif;
 }
 
@@ -143,3 +144,5 @@ blockquote > cite {
 		fill: $text-color;
 	}
 }
+
+@import "partials/_svgtext";
