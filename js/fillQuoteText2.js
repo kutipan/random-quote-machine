@@ -87,9 +87,12 @@ function addToOutput(tspan) {
 		wordStartTspan.setAttribute("dy", "1em");
 		wordStartTspan.firstInLine = true;
 	}
+
+	// console.log("added", tspan);
 }
 
 function resizeSvgOutToFit() {
+	console.log("resizing to", staticTxt.getBBox().height, "+", outputTxt.getBBox().height, "+ 12px = ", staticTxt.getBBox().height + outputTxt.getBBox().height + 12 + "px");
 	svgOut.style.height = staticTxt.getBBox().height + outputTxt.getBBox().height + 12 + "px";
 }
 
@@ -206,6 +209,7 @@ function emptyTextOutput() {
 	svgOut.replaceChild(clone, staticTxt);
 	staticTxt = clone;
 	outputTxt.setAttribute("y", "1em");
+	outputTxt.classList.remove("hidden", "animated");
 	//svgOut.removeChild(svgOut.firstChild);
 }
 
