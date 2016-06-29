@@ -1,23 +1,36 @@
 $text-size: 2.7rem;
+$author-size: 1.4em;
 
 .quote {
-	svg {
+	svg.quote-text {
 		outline: 1px dotted black;
 		width: 100%;
 		height: 1px;
+		font-size: $text-size;
+	}
+
+	svg.author {
+		outline: 1px dotted black;
+		width: 0;
+		height: $author-size;
+		font-size: $author-size;
 	}
 
 	text {
-		font-size: $text-size;
 		fill: none;
 		// stroke: black;
 		stroke-width: 2px;
 		font-family: CamBam-5;
 	}
 
+	text.dynamic {
+		visibility: hidden;
+	}
+
 	text.animated {
 		stroke-dasharray: 9em;
 		stroke-dashoffset: 9em;
+		visibility: visible;
 
 		> tspan {
 			animation: 0.7s linear 1 forwards dash;

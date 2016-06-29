@@ -1,19 +1,21 @@
 let dynamicTxt = document.getElementById("dynamic-output");
 let staticTxt = document.getElementById("static-output");
-let svgOut = document.getElementById("svg-output");
+const svgTxt = document.getElementById("svg-output");
 
-const inputStr = "I have come to believe that the whole world is an enigma, a harmless enigma that is made terrible by our own mad attempt to interpret it as though it had an underlying truth.";
+const svgAuthor = document.getElementById("svg-author");
+let authorTxt = document.getElementById("author");
+
+const inputStr = "I have come to believe that the whole world is an enigma, a harmless enigma that is made terrible by our own mad attempt to interpret it as though it had an underlying truth.", author = "Umberto Eco";
 const svgNS = "http://www.w3.org/2000/svg";
 
-const charAddFrequency = 180;
-let quoteTextIntervalId, quoteFilled = false, quoteTextBeingFilled = false, quoteBeingFilled = false, quoteTextInterval;
+const charAddFrequency = 180, initialSpaceWidthShift = -11;
+let quoteTextIntervalId, quoteAuthorIntervalId, quoteIntervalId, quoteFilled = false, quoteTextBeingFilled = false, quoteBeingFilled = false, quoteAuthorBeingFilled = false, interrupted = false;
 
-function outputTspans(str, freq=100, cb, done) {
+function outputTspans(str, cb, done) {
 	str = str.replace(/\n+\s*/g, "\n").trim();
 	const len = str.length;
 	if(len === 0) return;
 
-	// quoteTextIntervalId = setInterval(produceOneTspan, freq);
 	for (let ind = 0; ind < len;) {
 		const tspan = document.createElementNS(svgNS, "tspan");
 
@@ -26,32 +28,14 @@ function outputTspans(str, freq=100, cb, done) {
 		}
 		tspan.textContent = ch;
 		cb(tspan);
-		if(ind === len) {
-			// clearInterval(quoteTextIntervalId);
-			if(done) done(tspan);
+		if(ind === len && done) {
+			done(tspan);
 		}
 	}
-
-	// function produceOneTspan() {
-	// 	const tspan = document.createElementNS(svgNS, "tspan");
-	// 	let ch = str.charAt(ind++);
-	// 	if(ch === " " || ch === "\n" && ind < len-1) {
-	// 		let nextCh =str.charAt(ind++);
-	// 		if(nextCh === " " || nextCh === "\n" && ind < len - 1) nextCh += str.charAt(ind++);
-	//
-	// 		ch += nextCh;
-	// 	}
-	// 	tspan.textContent = ch;
-	// 	cb(tspan);
-	// 	if(ind === len) {
-	// 		// clearInterval(quoteTextIntervalId);
-	// 		if(done) done(tspan);
-	// 	}
-	// }
 }
 
-let lastTspan, wordStartTspan, spaceWidthShift, svgWidth = svgOut.getBoundingClientRect().width;
-function addToOutput(tspan) {
+let lastTextTspan, wordStartTspan, spaceWidthShift, svgWidth = svgTxt.getBoundingClientRect().width;
+function addToDynamicTxt(tspan) {
 	const firstChar = tspan.textContent.charAt(0);
 	const secondChar = tspan.textContent.charAt(1);
 	//console.log("char", firstChar, "code", firstChar.codePointAt(0));
@@ -59,8 +43,8 @@ function addToOutput(tspan) {
 		wordStartTspan = tspan;
 	}
 	if(firstChar === "\n" || secondChar === "\n") {
-		console.log("line feed");
-		tspan.setAttribute("x", secondChar !== "\n" && secondChar !== " " ? 0 : spaceWidthShift || -11);
+		// console.log("line feed");
+		tspan.setAttribute("x", secondChar !== "\n" && secondChar !== " " ? 0 : spaceWidthShift || initialSpaceWidthShift);
 		tspan.setAttribute("dy", "1em");
 		//tspan.textContent = tspan.textContent.replace("\n", "");
 		// console.log(dynamicTxt.children);
@@ -79,11 +63,11 @@ function addToOutput(tspan) {
 		}
 	}
 	//console.log("after", dynamicTxt.clientWidth);
-	if(dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
-		console.log("\\n");
-		//console.log("svgWidth", svgWidth, ", rect width", dynamicTxt.getBoundingClientRect().width, ", rect width--", dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || -11));
+	if(dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || initialSpaceWidthShift)/3 > svgWidth) {
+		// console.log("\\n");
+		//console.log("svgWidth", svgWidth, ", rect width", dynamicTxt.getBoundingClientRect().width, ", rect width--", dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || initialSpaceWidthShift));
 		// console.log("wst", wordStartTspan);
-		wordStartTspan.setAttribute("x", spaceWidthShift || -11);
+		wordStartTspan.setAttribute("x", spaceWidthShift || initialSpaceWidthShift);
 		wordStartTspan.setAttribute("dy", "1em");
 		wordStartTspan.firstInLine = true;
 	}
@@ -91,77 +75,60 @@ function addToOutput(tspan) {
 	// console.log("added", tspan);
 }
 
-function resizeSvgOutToFit() {
-	console.log("resizing to", staticTxt.getBBox().height, "+", dynamicTxt.getBBox().height, "+ 12px = ", staticTxt.getBBox().height + dynamicTxt.getBBox().height + 12 + "px");
-	svgOut.style.height = staticTxt.getBBox().height + dynamicTxt.getBBox().height + 12 + "px";
+let lastAuthorTspan;
+function addToAuthorTxt(tspan) {
+	console.log("adding", tspan);
+	authorTxt.appendChild(tspan);
+}
+
+function resizeSvgTxtToFit() {
+	console.log("resizing Text to", staticTxt.getBBox().height, "+", dynamicTxt.getBBox().height, "+ 12px = ", staticTxt.getBBox().height + dynamicTxt.getBBox().height + 12 + "px");
+	svgTxt.style.height = staticTxt.getBBox().height + dynamicTxt.getBBox().height + 12 + "px";
+}
+
+function resizeSvgAuthorToFit() {
+	console.log("resizing Author to", authorTxt.getBBox().width + 5, "px");
+	svgAuthor.style.width = authorTxt.getBBox().width + 5 + "px";
 }
 
 
-dynamicTxt.addEventListener("animationend", onAnimationEnd);
-let accum = document.querySelector("tspan.accum");
-let accumWordStart, finishedBefore = false;
-function onAnimationEnd({target}) {
+// dynamicTxt.addEventListener("animationend", onTextAnimationEnd);
+let accumTxt = dynamicTxt.querySelector("tspan.accum");
+let finishedBefore = false;
+function onTextAnimationEnd({target}) {
 	//console.log("anim end:", target);
 	if(target.tagName === "tspan") {
-		console.log("anim end:", target.textContent, target.textContent.includes("\n"),target.textContent.length);
+		// console.log("anim end:", target.textContent, target.textContent.includes("\n"),target.textContent.length);
 		//if(target.textContent.includes("\n")) return;
 
 		// if(target.textContent.charAt(0) === " ") {
-		// 	accumWordStart = accum.textContent.length;
+		// 	accumWordStart = accumTxt.textContent.length;
 		// }
-		console.log("newline", target.dy.baseVal.length > 0);
-		//console.log("LL", accum.getComputedTextLength(), "of", accum.textContent);
+		// console.log("newline", target.dy.baseVal.length > 0);
+		//console.log("LL", accumTxt.getComputedTextLength(), "of", accumTxt.textContent);
 
 		if(target.firstInLine) {
-			//console.log("LL", accum.getComputedTextLength(), "of", accum.textContent);
+			//console.log("LL", accumTxt.getComputedTextLength(), "of", accumTxt.textContent);
 			//target.textContent = target.textContent.replace("\n", "");
 			placeIntoStatic();
-			accum = target;
-			accum.classList.add("accum");
-			accum.setAttribute("x", 0);
+			accumTxt = target;
+			accumTxt.classList.add("accum");
+			accumTxt.setAttribute("x", 0);
 
 		} else {
-			accum.textContent += target.textContent;
+			accumTxt.textContent += target.textContent;
 			//target.textContent = "";
 			target.remove();
 		}
 
-		// if(dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
-		// 	console.log("break on", accumWordStart || (accum.getNumberOfChars()-1));
-		// 	const lastWord = accum.textContent.slice(accumWordStart || (accum.getNumberOfChars()-1));
-		// 	accumWordStart = null;
-		// 	const nextAccum = document.createElementNS(svgNS, "tspan");
-		// 	nextAccum.classList.add("accum");
-		// 	nextAccum.textContent = lastWord;
-		// 	nextAccum.setAttribute("x", 0);
-		// 	nextAccum.setAttribute("dy", "1em");
-		//
-		// 	accum.textContent = accum.textContent.slice(0, -lastWord.length);
-		//
-		// 	dynamicTxt.insertBefore(nextAccum, accum.nextSibling);
-		// 	//accum.insertAdjacentElement("afterend", nextAccum);	// to same effect
-		// 	//console.log("STATIC", accum.textContent);
-		// 	placeIntoStatic();
-		// 	accum = nextAccum;
-		//
-		// 	const nextSib = findNextSiblingWithDy(nextAccum);
-		//
-		// 	if(nextSib) {
-		// 		nextSib.removeAttribute("dy");
-		// 		nextSib.removeAttribute("x");
-		// 		console.log("NEXT", nextSib);
-		// 	}
-		//
-		// }
-
-		if(target === lastTspan && dynamicTxt.hasChildNodes()) {
-			lastTspan = null;
+		if(target === lastTextTspan && dynamicTxt.hasChildNodes()) {
+			lastTextTspan = null;
 			placeIntoStatic();
-			accum = document.createElementNS(svgNS, "tspan");
-			accum.classList.add("accum");
-			//accum.setAttribute("dy", "1em");
+			accumTxt = document.createElementNS(svgNS, "tspan");
+			accumTxt.classList.add("accum");
+			//accumTxt.setAttribute("dy", "1em");
 			if(staticTxt.hasChildNodes()) dynamicTxt.setAttribute("y", staticTxt.childElementCount + 1 + "em");
-			dynamicTxt.appendChild(accum);
+			dynamicTxt.appendChild(accumTxt);
 			finishedBefore = true;
 			console.log("dynamicTxt EMPTIED");
 			onQuoteTextFilled();
@@ -170,30 +137,17 @@ function onAnimationEnd({target}) {
 	}
 }
 
-function findNextSiblingWithDy(tspan) {
-	let nextSib = tspan.nextSibling;
-	console.log("searching next sibling");
-	while(nextSib) {
-		if(nextSib.dy.baseVal.length > 0) {
-			return nextSib.lf ? null : nextSib;
-		}
-		nextSib = nextSib.nextSibling;
-	}
-
-	return null;
-}
-
 function placeIntoStatic() {
-	const firstChar = accum.textContent.charAt(0);
-	const secondChar = accum.textContent.charAt(1);
-	accum.setAttribute("x", firstChar === " " || (firstChar === "\n" && secondChar === " ") ? spaceWidthShift || -11 : 0);
+	const firstChar = accumTxt.textContent.charAt(0);
+	const secondChar = accumTxt.textContent.charAt(1);
+	accumTxt.setAttribute("x", firstChar === " " || (firstChar === "\n" && secondChar === " ") ? spaceWidthShift || initialSpaceWidthShift : 0);
 	if(finishedBefore && staticTxt.hasChildNodes()) {
 		finishedBefore = false;
-		accum.setAttribute("dy", "1em");
+		accumTxt.setAttribute("dy", "1em");
 	}
-	// console.log("after accum", accum.nextSibling);
-	staticTxt.appendChild(accum);
-	console.log("STATIC", accum);
+	// console.log("after accumTxt", accumTxt.nextSibling);
+	staticTxt.appendChild(accumTxt);
+	// console.log("STATIC", accumTxt);
 	// console.log("STATIC children", staticTxt.childElementCount);
 	//const y = parseInt(dynamicTxt.getAttribute("y"), 10);
 	// console.log("y", dynamicTxt.y.baseVal.length > 0 ? dynamicTxt.y.baseVal[0] : null);
@@ -201,34 +155,70 @@ function placeIntoStatic() {
 	// console.log("y", dynamicTxt.y.baseVal.length > 0 ? dynamicTxt.y.baseVal[0] : null);
 }
 
+svgTxt.addEventListener("animationend", onTextAnimationEnd);
+
+let accumAuthor = authorTxt.querySelector("tspan.accum");
+function onAuthorAnimationEnd({target}) {
+	// console.log("anim end:", target);
+	if(target.tagName === "tspan") {
+		// console.log("anim end:", target.textContent, target.textContent.length);
+
+		accumAuthor.textContent += target.textContent;
+		//target.textContent = "";
+		target.remove();
+
+
+		if(target === lastAuthorTspan) {
+			lastAuthorTspan = null;
+			console.log("authorTxt FILLED");
+			onQuoteAuthorFilled();
+		}
+
+	}
+}
+svgAuthor.addEventListener("animationend", onAuthorAnimationEnd);
+
 
 // const clearOutBtn = document.getElementById("clear-output");
 function emptyTextOutput() {
 	let clone = staticTxt.cloneNode(false);
 
-	svgOut.replaceChild(clone, staticTxt);
+	svgTxt.replaceChild(clone, staticTxt);
 	staticTxt = clone;
 
 	clone = dynamicTxt.cloneNode(false);
 	clone.setAttribute("y", "1em");
 	clone.classList.remove("hidden", "animated");
 
-	accum = document.createElementNS(svgNS, "tspan");
-	accum.classList.add("accum");
+	accumTxt = document.createElementNS(svgNS, "tspan");
+	accumTxt.classList.add("accum");
 
-	clone.appendChild(accum);
-	clone.addEventListener("animationend", onAnimationEnd);
-	svgOut.replaceChild(clone, dynamicTxt);
+	clone.appendChild(accumTxt);
+	svgTxt.replaceChild(clone, dynamicTxt);
 	dynamicTxt = clone;
-	//svgOut.removeChild(svgOut.firstChild);
+}
+
+function emptyAuthor() {
+	const clone = authorTxt.cloneNode(false);
+	clone.classList.remove("hidden", "animated");
+
+	accumAuthor = document.createElementNS(svgNS, "tspan");
+	accumAuthor.classList.add("accum");
+
+	clone.appendChild(accumAuthor);
+
+	svgAuthor.replaceChild(clone, authorTxt);
+	authorTxt = clone;
+
 }
 
 function emptyQuote() {
 	emptyTextOutput();
+	emptyAuthor();
 }
 // function recalcSvgWidth() {
 // 	console.log("re-width");
-// 	svgWidth = svgOut.getBoundingClientRect().width;
+// 	svgWidth = svgTxt.getBoundingClientRect().width;
 // }
 // let timeoutId;
 // window.addEventListener("resize", function() {
@@ -238,18 +228,27 @@ function emptyQuote() {
 
 
 
-function doneWithTspans(lastOne) {
-	console.log("lastTspan", lastOne);
-	lastTspan = lastOne;
-	resizeSvgOutToFit();
+function doneWithTextTspans(lastOne) {
+	// console.log("lastTextTspan", lastOne);
+	lastTextTspan = lastOne;
+	resizeSvgTxtToFit();
 
+	// FIX call startAnimation only after both doneWithTextTspans and doneWithAuthorTspans
+	// startTextAnimations();
 	startAnimations();
 }
 
-function startAnimations() {
-	dynamicTxt.classList.add("hidden", "animated");
-	console.log("STARTING ANIMATIONS");
+function doneWithAuthorTspans(lastOne) {
+	console.log("lastAuthorTspan", lastOne);
+	lastAuthorTspan = lastOne;
+	resizeSvgAuthorToFit();
+}
 
+function startTextAnimations() {
+	dynamicTxt.classList.add("hidden", "animated");
+	console.log("STARTING ANIMATIONS on", dynamicTxt);
+
+	// first one is tspan.accum, skip it
 	let tspan = dynamicTxt.children[1];
 
 	quoteTextIntervalId = setInterval(startTspanAnimation, charAddFrequency);
@@ -264,24 +263,69 @@ function startAnimations() {
 
 }
 
+function startAuthorAnimations() {
+	authorTxt.classList.add("hidden", "animated");
+	console.log("STARTING ANIMATIONS on", authorTxt);
+
+	// first one is tspan.accum, skip it
+	let tspan = authorTxt.children[1];
+
+	quoteAuthorIntervalId = setInterval(startTspanAnimation, charAddFrequency);
+
+	function startTspanAnimation() {
+		tspan.style.display = "unset";
+		tspan = tspan.nextSibling;
+		if(!tspan) {
+			clearInterval(quoteAuthorIntervalId);
+		}
+	}
+
+}
+
+function startAnimations() {
+	dynamicTxt.classList.add("hidden", "animated");
+	console.log("STARTING ANIMATIONS on", dynamicTxt);
+
+	// first one is tspan.accum, skip it
+	let tspan = dynamicTxt.children[1];
+
+	quoteIntervalId = setInterval(startTspanAnimation, charAddFrequency);
+
+	function startTspanAnimation() {
+		// console.log("DISP", tspan);
+		tspan.style.display = "unset";
+		if(tspan === dynamicTxt.lastChild) {
+			authorTxt.classList.add("hidden", "animated");
+			console.log("STARTING ANIMATIONS on", authorTxt);
+			tspan = authorTxt.firstChild;
+		}
+		tspan = tspan.nextSibling;
+		if(!tspan) {
+			clearInterval(quoteIntervalId);
+		}
+	}
+
+}
+
 
 function fillQuoteText() {
-	quoteTextBeingFilled = quoteBeingFilled = true;
+	quoteTextBeingFilled = true;
 	// $output.text("");
 	getQuote.classList.add("on");
+	dynamicTxt.classList.add("dynamic");
 	//const str = input.value;
 	// to be done in 7sec
 	// const freq = 5000/inputStr.length;
 	// console.log("freq", freq);
 
-	outputTspans(inputStr, charAddFrequency, addToOutput, doneWithTspans);
+	outputTspans(inputStr, addToDynamicTxt, doneWithTextTspans);
 }
 
 function onQuoteTextFilled() {
 	quoteTextBeingFilled = false;
 
-	// REMOVE later
-	onQuoteFilled();
+	// quote text filled, start with quote author
+	// if(!interrupted) startAuthorAnimations();
 }
 
 // call after #quote-text and #quote-author are finished
@@ -292,28 +336,43 @@ function onQuoteFilled() {
 }
 
 function fillQuoteTextImmediately() {
-	clearInterval(quoteTextIntervalId);
+	// clearInterval(quoteTextIntervalId);
 	// $output.text(inputStr);
 	// onQuoteTextFilled();
-	dynamicTxt.classList.remove("animated", "hidden");
+	dynamicTxt.classList.remove("animated", "hidden", "dynamic");
 	onQuoteTextFilled();
 }
 
+function fillQuoteAuthor() {
+	quoteAuthorBeingFilled = true;
+	authorTxt.classList.add("dynamic");
+	outputTspans(author, addToAuthorTxt, doneWithAuthorTspans);
+}
 
-// $getQuote.click(function () {
-// 	if(quoteBeingFilled) {
-// 		fillQuoteTextImmediately();
-// 	} else {
-// 		fillQuoteText();
-// 	}
-// });
+function onQuoteAuthorFilled() {
+	quoteAuthorBeingFilled = false;
+	onQuoteFilled();
+}
+
+function fillQuoteAuthorImmediately() {
+	// clearInterval(quoteAuthorIntervalId);
+	authorTxt.classList.remove("animated", "hidden", "dynamic");
+	onQuoteAuthorFilled();
+}
+
 
 function fillQuote() {
 	if(quoteBeingFilled) {
+		interrupted = true;
+		clearInterval(quoteIntervalId);
 		fillQuoteTextImmediately();
+		fillQuoteAuthorImmediately();
 	} else {
 		emptyQuote();
+		interrupted = false;
+		quoteBeingFilled = true;
 		fillQuoteText();
+		fillQuoteAuthor();
 	}
 }
 
@@ -322,5 +381,5 @@ function fillQuote() {
 const getQuote = document.getElementById("get-quote");
 getQuote.onclick = fillQuote;
 // addBtn.onclick = function() {
-// 	outputTspans(input.value, charAddFrequency, addToOutput, doneWithTspans);
+// 	outputTspans(input.value, charAddFrequency, addToDynamicTxt, doneWithTextTspans);
 // };
