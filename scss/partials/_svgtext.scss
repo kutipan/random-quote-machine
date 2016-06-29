@@ -4,7 +4,7 @@ $text-size: 2.7rem;
 	svg {
 		outline: 1px dotted black;
 		width: 100%;
-		height: 700px;
+		height: 1px;
 	}
 
 	text {
@@ -13,11 +13,15 @@ $text-size: 2.7rem;
 		// stroke: black;
 		stroke-width: 2px;
 		font-family: CamBam-5;
+
+		&.dynamic {
+			stroke-dasharray: 9em;
+			stroke-dashoffset: 9em;
+		}
+
 	}
 
 	text.animated {
-		stroke-dasharray: 9em;
-		stroke-dashoffset: 9em;
 
 		> tspan {
 			animation: 0.7s linear 1 forwards dash;
@@ -28,6 +32,10 @@ $text-size: 2.7rem;
 				stroke-dasharray: 0;
 			}
 		}
+	}
+
+	text.hidden > tspan:not(.accum) {
+		display: none;
 	}
 }
 

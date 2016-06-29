@@ -12,12 +12,11 @@ function outputTspans(str, freq=100, cb, done) {
 	str = str.replace(/\n+\s*/g, "\n").trim();
 	const len = str.length;
 	if(len === 0) return;
-	let ind = 0;
 
-	quoteTextIntervalId = setInterval(produceOneTspan, freq);
-
-	function produceOneTspan() {
+	// quoteTextIntervalId = setInterval(produceOneTspan, freq);
+	for (let ind = 0; ind < len;) {
 		const tspan = document.createElementNS(svgNS, "tspan");
+
 		let ch = str.charAt(ind++);
 		if(ch === " " || ch === "\n" && ind < len-1) {
 			let nextCh =str.charAt(ind++);
@@ -28,10 +27,27 @@ function outputTspans(str, freq=100, cb, done) {
 		tspan.textContent = ch;
 		cb(tspan);
 		if(ind === len) {
-			clearInterval(quoteTextIntervalId);
+			// clearInterval(quoteTextIntervalId);
 			if(done) done(tspan);
 		}
 	}
+
+	// function produceOneTspan() {
+	// 	const tspan = document.createElementNS(svgNS, "tspan");
+	// 	let ch = str.charAt(ind++);
+	// 	if(ch === " " || ch === "\n" && ind < len-1) {
+	// 		let nextCh =str.charAt(ind++);
+	// 		if(nextCh === " " || nextCh === "\n" && ind < len - 1) nextCh += str.charAt(ind++);
+	//
+	// 		ch += nextCh;
+	// 	}
+	// 	tspan.textContent = ch;
+	// 	cb(tspan);
+	// 	if(ind === len) {
+	// 		// clearInterval(quoteTextIntervalId);
+	// 		if(done) done(tspan);
+	// 	}
+	// }
 }
 
 let lastTspan, wordStartTspan, spaceWidthShift, svgWidth = svgOut.getBoundingClientRect().width;
@@ -44,12 +60,12 @@ function addToOutput(tspan) {
 	}
 	if(firstChar === "\n" || secondChar === "\n") {
 		console.log("line feed");
-		tspan.setAttribute("x", secondChar !== "\n" && secondChar !== " " ? 0 : spaceWidthShift || -19);
+		tspan.setAttribute("x", secondChar !== "\n" && secondChar !== " " ? 0 : spaceWidthShift || -11);
 		tspan.setAttribute("dy", "1em");
 		//tspan.textContent = tspan.textContent.replace("\n", "");
 		console.log(outputTxt.children);
 		console.log(tspan, "second", tspan === outputTxt.children[1]);
-		tspan.lf = true;
+		tspan.firstInLine = true;
 	}
 	//console.log("before", outputTxt.clientWidth);
 	outputTxt.appendChild(tspan);
@@ -63,13 +79,18 @@ function addToOutput(tspan) {
 		}
 	}
 	//console.log("after", outputTxt.clientWidth);
-	if(outputTxt.getBoundingClientRect().width + (spaceWidthShift || -19)/3 > svgWidth) {
+	if(outputTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
 		console.log("\\n");
-		//console.log("svgWidth", svgWidth, ", rect width", outputTxt.getBoundingClientRect().width, ", rect width--", outputTxt.getBoundingClientRect().width + (spaceWidthShift || -19));
+		//console.log("svgWidth", svgWidth, ", rect width", outputTxt.getBoundingClientRect().width, ", rect width--", outputTxt.getBoundingClientRect().width + (spaceWidthShift || -11));
 		console.log("wst", wordStartTspan);
-		wordStartTspan.setAttribute("x", spaceWidthShift || -19);
+		wordStartTspan.setAttribute("x", spaceWidthShift || -11);
 		wordStartTspan.setAttribute("dy", "1em");
+		wordStartTspan.firstInLine = true;
 	}
+}
+
+function resizeSvgOutToFit() {
+	svgOut.style.height = staticTxt.getBBox().height + outputTxt.getBBox().height + 12 + "px";
 }
 
 
@@ -82,13 +103,13 @@ function onAnimationEnd({target}) {
 		console.log("anim end:", target.textContent, target.textContent.includes("\n"),target.textContent.length);
 		//if(target.textContent.includes("\n")) return;
 
-		if(target.textContent.charAt(0) === " ") {
-			accumWordStart = accum.textContent.length;
-		}
+		// if(target.textContent.charAt(0) === " ") {
+		// 	accumWordStart = accum.textContent.length;
+		// }
 		console.log("newline", target.dy.baseVal.length > 0);
 		//console.log("LL", accum.getComputedTextLength(), "of", accum.textContent);
 
-		if((target.dy.baseVal.length > 0 && accum.getComputedTextLength() + (spaceWidthShift || -19)/3 >= svgWidth) || target.lf) {
+		if(target.firstInLine) {
 			//console.log("LL", accum.getComputedTextLength(), "of", accum.textContent);
 			//target.textContent = target.textContent.replace("\n", "");
 			placeIntoStatic();
@@ -102,33 +123,33 @@ function onAnimationEnd({target}) {
 			target.remove();
 		}
 
-		if(outputTxt.getBoundingClientRect().width + (spaceWidthShift || -19)/3 > svgWidth) {
-			console.log("break on", accumWordStart || (accum.getNumberOfChars()-1));
-			const lastWord = accum.textContent.slice(accumWordStart || (accum.getNumberOfChars()-1));
-			accumWordStart = null;
-			const nextAccum = document.createElementNS(svgNS, "tspan");
-			nextAccum.classList.add("accum");
-			nextAccum.textContent = lastWord;
-			nextAccum.setAttribute("x", 0);
-			nextAccum.setAttribute("dy", "1em");
-
-			accum.textContent = accum.textContent.slice(0, -lastWord.length);
-
-			outputTxt.insertBefore(nextAccum, accum.nextSibling);
-			//accum.insertAdjacentElement("afterend", nextAccum);	// to same effect
-			//console.log("STATIC", accum.textContent);
-			placeIntoStatic();
-			accum = nextAccum;
-
-			const nextSib = findNextSiblingWithDy(nextAccum);
-
-			if(nextSib) {
-				nextSib.removeAttribute("dy");
-				nextSib.removeAttribute("x");
-				console.log("NEXT", nextSib);
-			}
-
-		}
+		// if(outputTxt.getBoundingClientRect().width + (spaceWidthShift || -11)/3 > svgWidth) {
+		// 	console.log("break on", accumWordStart || (accum.getNumberOfChars()-1));
+		// 	const lastWord = accum.textContent.slice(accumWordStart || (accum.getNumberOfChars()-1));
+		// 	accumWordStart = null;
+		// 	const nextAccum = document.createElementNS(svgNS, "tspan");
+		// 	nextAccum.classList.add("accum");
+		// 	nextAccum.textContent = lastWord;
+		// 	nextAccum.setAttribute("x", 0);
+		// 	nextAccum.setAttribute("dy", "1em");
+		//
+		// 	accum.textContent = accum.textContent.slice(0, -lastWord.length);
+		//
+		// 	outputTxt.insertBefore(nextAccum, accum.nextSibling);
+		// 	//accum.insertAdjacentElement("afterend", nextAccum);	// to same effect
+		// 	//console.log("STATIC", accum.textContent);
+		// 	placeIntoStatic();
+		// 	accum = nextAccum;
+		//
+		// 	const nextSib = findNextSiblingWithDy(nextAccum);
+		//
+		// 	if(nextSib) {
+		// 		nextSib.removeAttribute("dy");
+		// 		nextSib.removeAttribute("x");
+		// 		console.log("NEXT", nextSib);
+		// 	}
+		//
+		// }
 
 		if(target === lastTspan && outputTxt.hasChildNodes()) {
 			lastTspan = null;
@@ -162,7 +183,7 @@ function findNextSiblingWithDy(tspan) {
 function placeIntoStatic() {
 	const firstChar = accum.textContent.charAt(0);
 	const secondChar = accum.textContent.charAt(1);
-	accum.setAttribute("x", firstChar === " " || (firstChar === "\n" && secondChar === " ") ? spaceWidthShift || -19 : 0);
+	accum.setAttribute("x", firstChar === " " || (firstChar === "\n" && secondChar === " ") ? spaceWidthShift || -11 : 0);
 	if(finishedBefore && staticTxt.hasChildNodes()) {
 		finishedBefore = false;
 		accum.setAttribute("dy", "1em");
@@ -209,6 +230,27 @@ getQuote.onclick = fillQuoteText;
 function doneWithTspans(lastOne) {
 	console.log("lastTspan", lastOne);
 	lastTspan = lastOne;
+	resizeSvgOutToFit();
+
+	startAnimations();
+}
+
+function startAnimations() {
+	outputTxt.classList.add("hidden", "animated");
+	console.log("STARTING ANIMATIONS");
+
+	let tspan = outputTxt.children[1];
+
+	quoteTextIntervalId = setInterval(startTspanAnimation, charAddFrequency);
+
+	function startTspanAnimation() {
+		tspan.style.display = "unset";
+		tspan = tspan.nextSibling;
+		if(!tspan) {
+			clearInterval(quoteTextIntervalId);
+		}
+	}
+
 }
 
 
