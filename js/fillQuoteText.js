@@ -8,7 +8,7 @@ const svgTxt = document.getElementById("svg-output");
 const textCharAddFrequency = 120, initialSpaceWidthShift = -11;
 let quoteTextIntervalId,  quoteTextBeingFilled = false;
 
-let lastTextTspan, wordStartTspan, spaceWidthShift, svgWidth = svgTxt.getBoundingClientRect().width;
+let lastTextTspan, wordStartTspan, spaceWidthShift, svgWidth = svgTxt.getBoundingClientRect().width, stillFirstLine = false;;
 function addToDynamicTxt(tspan) {
 	const firstChar = tspan.textContent.charAt(0);
 	const secondChar = tspan.textContent.charAt(1);
@@ -22,8 +22,12 @@ function addToDynamicTxt(tspan) {
 		tspan.setAttribute("dy", "1em");
 		tspan.firstInLine = true;
 	}
+	// console.log("BEFORE", tspan.textContent, dynamicTxt.getBoundingClientRect().width - (stillFirstLine ? (spaceWidthShift || initialSpaceWidthShift) : 0), ">", svgWidth, "=", dynamicTxt.getBoundingClientRect().width - (stillFirstLine ? (spaceWidthShift || initialSpaceWidthShift) : 0) > svgWidth);
 
 	dynamicTxt.appendChild(tspan);
+
+	// console.log("AFTER", tspan.textContent, dynamicTxt.getBoundingClientRect().width - (stillFirstLine ? (spaceWidthShift || initialSpaceWidthShift) : 0), ">", svgWidth, "=", dynamicTxt.getBoundingClientRect().width - (stillFirstLine ? (spaceWidthShift || initialSpaceWidthShift) : 0) > svgWidth);
+
 	if(!spaceWidthShift && wordStartTspan ) {
 		try {
 			spaceWidthShift = -Math.round(wordStartTspan.getStartPositionOfChar(1).x - wordStartTspan.getStartPositionOfChar(0).x);
@@ -32,10 +36,14 @@ function addToDynamicTxt(tspan) {
 		}
 	}
 
-	if(dynamicTxt.getBoundingClientRect().width + (spaceWidthShift || initialSpaceWidthShift)/3 > svgWidth) {
+	if(dynamicTxt.getBoundingClientRect().width - (stillFirstLine ? (spaceWidthShift || initialSpaceWidthShift) : 0) > svgWidth) {
 		wordStartTspan.setAttribute("x", spaceWidthShift || initialSpaceWidthShift);
 		wordStartTspan.setAttribute("dy", "1em");
 		wordStartTspan.firstInLine = true;
+		stillFirstLine = false;
+
+		// console.log("BREAK ON", wordStartTspan.textContent);
+		// console.log("AFTER", tspan.textContent, dynamicTxt.getBoundingClientRect().width - (spaceWidthShift || initialSpaceWidthShift), ">", svgWidth, "=", dynamicTxt.getBoundingClientRect().width - (spaceWidthShift || initialSpaceWidthShift) > svgWidth);
 	}
 }
 
@@ -128,10 +136,9 @@ function startTextAnimations() {
 }
 
 function fillQuoteText() {
-	quoteTextBeingFilled = true;
+	stillFirstLine = quoteTextBeingFilled = true;
 	dynamicTxt.classList.add("dynamic");
-
-	outputTspans(inputStr, addToDynamicTxt, doneWithTextTspans);
+	outputTspans(quote.quote, addToDynamicTxt, doneWithTextTspans);
 }
 
 function onQuoteTextFilled() {
