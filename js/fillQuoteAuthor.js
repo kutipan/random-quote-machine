@@ -71,7 +71,7 @@ function startAuthorAnimations() {
 function fillQuoteAuthor() {
 	quoteAuthorBeingFilled = true;
 	authorTxt.classList.add("dynamic");
-	outputTspans(author, addToAuthorTxt, doneWithAuthorTspans);
+	outputTspans(quote.author, addToAuthorTxt, doneWithAuthorTspans);
 }
 
 function onQuoteAuthorFilled() {

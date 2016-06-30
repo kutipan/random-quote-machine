@@ -3,8 +3,9 @@
 
 const getQuote = document.getElementById("get-quote");
 
-const inputStr = "I have come to believe that the whole world is an enigma, a harmless enigma that is made terrible by our own mad attempt to interpret it as though it had an underlying truth.", author = "Umberto Eco";
+const inputStr = "Today, I consider myself the luckiest man on", author = "Umberto Eco";
 const svgNS = "http://www.w3.org/2000/svg";
+let quote;
 
 let quoteFilled = false, quoteBeingFilled = false;
 
@@ -44,29 +45,65 @@ function onQuoteFilled() {
 
 
 function fillQuote() {
-	if(quoteBeingFilled) {
-		fillQuoteTextImmediately();
-		fillQuoteAuthorImmediately();
-	} else {
-		emptyQuote();
-		quoteBeingFilled = true;
-		getQuote.classList.add("on");
+	if(!quote) return;
 
-		fillQuoteText();
-		fillQuoteAuthor();
+	emptyQuote();
+	quoteBeingFilled = true;
 
-		startTextAnimations();
-	}
+	fillQuoteText();
+	fillQuoteAuthor();
+
+	startTextAnimations();
+
 }
 
-getQuote.onclick = fillQuote;
+function fillQuoteImmediately() {
+	fillQuoteTextImmediately();
+	fillQuoteAuthorImmediately();
+}
+
+getQuote.onclick = requestQuote;
 
 
 // Inactive browser tabs buffer some of the setInterval or setTimeout functions(at least in Chrome), and then execute all at once
 // Messes up timing-dependent animations
 document.addEventListener("visibilitychange", function() {
 	if(document.visibilityState === "visible" && quoteBeingFilled) {
-		fillQuoteTextImmediately();
-		fillQuoteAuthorImmediately();
+		fillQuote();
 	}
+});
+
+
+function requestQuote() {
+	if(quoteBeingFilled) {
+		fillQuoteImmediately();
+		return;
+	}
+
+	getQuote.classList.add("on");
+
+	AJAX.get({
+		url: 'https://andruxnet-random-famous-quotes.p.mashape.com/cat=famous',
+		headers: {
+			"X-Mashape-Key": "OivH71yd3tmshl9YKzFH7BTzBVRQp1RaKLajsnafgL2aPsfP9V",
+			"Accept": "application/json",
+			"Content-Type": "application/x-www-form-urlencoded"
+		}
+	}).then(quoteGetSuccess, quoteGetError);
+}
+
+function quoteGetSuccess(result) {
+	console.log(JSON.parse(result), typeof result);
+	quote = JSON.parse(result);
+	fillQuote();
+}
+
+function quoteGetError(error) {
+	console.log("Error executing AJAX request:", error);
+	getQuote.classList.remove("on");
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+	console.log("DOM fully loaded and parsed");
+	requestQuote();
 });
