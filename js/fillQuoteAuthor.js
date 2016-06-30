@@ -4,7 +4,7 @@
 const svgAuthor = document.getElementById("svg-author");
 let authorTxt = document.getElementById("author");
 
-const authorCharAddFrequency = 60;
+const authorCharAddFrequency = 100;
 let quoteAuthorIntervalId, quoteAuthorBeingFilled = false;
 
 let lastAuthorTspan;

@@ -3,16 +3,14 @@ $author-size: 1.4em;
 
 .quote {
 	svg.text {
-		outline: 1px dotted black;
 		width: 100%;
 		height: 1px;
 		font-size: $text-size;
 	}
 
 	svg.author {
-		outline: 1px dotted black;
 		width: 0;
-		height: 1.5em;
+		height: 2em;
 		font-size: $author-size;
 	}
 

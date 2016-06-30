@@ -56,21 +56,6 @@ blockquote {
 	font-family: 'Montaga', serif;
 }
 
-blockquote > p {
-	quotes: '❝' '❞';
-	position: relative;
-	font-size: 1.7em;
-	margin-bottom: 10px;
-
-	&::before {
-		content: open-quote;
-		position: absolute;
-		top: -20px;
-		left: -35px;
-		font-size: 2em;
-	}
-}
-
 blockquote > .quote-text {
 	quotes: '❝' '❞';
 	position: relative;
