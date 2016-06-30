@@ -71,9 +71,21 @@ blockquote > p {
 	}
 }
 
+blockquote > .quote-text {
+	quotes: '❝' '❞';
+	position: relative;
+
+	&::before {
+		content: open-quote;
+		position: absolute;
+		top: -20px;
+		left: -40px;
+		font-size: 3.5rem;
+	}
+}
+
 blockquote > cite {
 	align-self: flex-end;
-	font-size: 1.3em;
 	margin-top: 10px;
 }
 
