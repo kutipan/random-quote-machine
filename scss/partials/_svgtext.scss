@@ -2,7 +2,7 @@ $text-size: 2.7rem;
 $author-size: 1.4em;
 
 .quote {
-	svg.quote-text {
+	svg.text {
 		outline: 1px dotted black;
 		width: 100%;
 		height: 1px;
@@ -12,7 +12,7 @@ $author-size: 1.4em;
 	svg.author {
 		outline: 1px dotted black;
 		width: 0;
-		height: $author-size;
+		height: 1.5em;
 		font-size: $author-size;
 	}
 
@@ -50,12 +50,14 @@ $author-size: 1.4em;
 
 @keyframes dash {
 	from {
-		stroke-dashoffset: $text-size * 9;
+		// stroke-dashoffset: $text-size * 9;
 		// stroke-dashoffset: 36rem;
+		stroke-dashoffset: 9em;
 	}
 	to {
-		stroke-dashoffset: $text-size * 4.5;
+		// stroke-dashoffset: $text-size * 4.5;
 		// stroke-dashoffset: 18rem;
+		stroke-dashoffset: 4.5em;
 	}
 }
 

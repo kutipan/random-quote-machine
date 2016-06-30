@@ -110,6 +110,7 @@ function doneWithTextTspans(lastOne) {
 
 function startTextAnimations() {
 	dynamicTxt.classList.add("hidden", "animated");
+	// console.log("STARTING ANIMATIONS on", dynamicTxt);
 
 	// first one is tspan.accum, skip it
 	let tspan = dynamicTxt.children[1];
