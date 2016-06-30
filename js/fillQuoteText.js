@@ -118,20 +118,31 @@ function doneWithTextTspans(lastOne) {
 
 function startTextAnimations() {
 	dynamicTxt.classList.add("hidden", "animated");
+	clearInterval(quoteTextIntervalId);
 	// console.log("STARTING ANIMATIONS on", dynamicTxt);
 
 	// first one is tspan.accum, skip it
 	let tspan = dynamicTxt.children[1];
+	if(!tspan) return;
+	// immediate animation of first character
+	tspan.style.display = "unset";
 
 	quoteTextIntervalId = setInterval(startTspanAnimation, textCharAddFrequency);
 
 	function startTspanAnimation() {
-		tspan.style.display = "unset";
-		tspan = tspan.nextSibling;
-		if(!tspan) {
+		// tspan.style.display = "unset";
+		// protect from button mashing -> events in quick succession
+		if(tspan) tspan = tspan.nextSibling;
+
+		if(tspan) tspan.style.display = "unset";
+		else {
 			clearInterval(quoteTextIntervalId);
 			startAuthorAnimations();
 		}
+		// if(!tspan) {
+		// 	clearInterval(quoteTextIntervalId);
+		// 	startAuthorAnimations();
+		// }
 	}
 }
 

@@ -50,10 +50,12 @@ function doneWithAuthorTspans(lastOne) {
 
 function startAuthorAnimations() {
 	authorTxt.classList.add("hidden", "animated");
+	clearInterval(quoteAuthorIntervalId);
 	// console.log("STARTING ANIMATIONS on", authorTxt);
 
 	// first one is tspan.accum, skip it
 	let tspan = authorTxt.children[1];
+	if(!tspan) return;
 	// immediate animation of first character
 	tspan.style.display = "unset";
 
@@ -61,7 +63,8 @@ function startAuthorAnimations() {
 
 	function startTspanAnimation() {
 		// tspan.style.display = "unset";
-		tspan = tspan.nextSibling;
+		// protect from button mashing -> events in quick succession
+		if(tspan) tspan = tspan.nextSibling;
 
 		if(tspan) tspan.style.display = "unset";
 		else clearInterval(quoteAuthorIntervalId);
