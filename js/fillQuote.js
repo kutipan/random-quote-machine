@@ -60,3 +60,13 @@ function fillQuote() {
 }
 
 getQuote.onclick = fillQuote;
+
+
+// Inactive browser tabs buffer some of the setInterval or setTimeout functions(at least in Chrome), and then execute all at once
+// Messes up timing-dependent animations
+document.addEventListener("visibilitychange", function() {
+	if(document.visibilityState === "visible" && quoteBeingFilled) {
+		fillQuoteTextImmediately();
+		fillQuoteAuthorImmediately();
+	}
+});

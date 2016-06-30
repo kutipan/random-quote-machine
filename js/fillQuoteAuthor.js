@@ -24,7 +24,6 @@ function onAuthorAnimationEnd({target}) {
 
 		if(target === lastAuthorTspan) {
 			lastAuthorTspan = null;
-			console.log("authorTxt FILLED");
 			onQuoteAuthorFilled();
 		}
 	}
@@ -51,7 +50,6 @@ function doneWithAuthorTspans(lastOne) {
 
 function startAuthorAnimations() {
 	authorTxt.classList.add("hidden", "animated");
-	console.log("STARTING ANIMATIONS on", authorTxt);
 
 	// first one is tspan.accum, skip it
 	let tspan = authorTxt.children[1];

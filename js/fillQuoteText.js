@@ -66,7 +66,6 @@ function onTextAnimationEnd({target}) {
 			if(staticTxt.hasChildNodes()) dynamicTxt.setAttribute("y", staticTxt.childElementCount + 1 + "em");
 			dynamicTxt.appendChild(accumTxt);
 			finishedBefore = true;
-			console.log("dynamicTxt EMPTIED");
 			onQuoteTextFilled();
 		}
 	}
@@ -111,7 +110,6 @@ function doneWithTextTspans(lastOne) {
 
 function startTextAnimations() {
 	dynamicTxt.classList.add("hidden", "animated");
-	console.log("STARTING ANIMATIONS on", dynamicTxt);
 
 	// first one is tspan.accum, skip it
 	let tspan = dynamicTxt.children[1];
