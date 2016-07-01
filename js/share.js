@@ -13,7 +13,7 @@
 
 		const width  = 575,
 			height = 450,
-			left   = (window.innerWidth - width)/2,
+			left   = window.innerWidth - width - 20,
 			top    = (window.innerHeight - height)/2,
 			url    = `https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=${encodeURIComponent(`"${quote.quote}" ${quote.author}`)}`,
 			opts   = `status=1,
