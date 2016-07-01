@@ -7,6 +7,10 @@
 
 		if(!quote) return;
 
+		if(quoteBeingFilled) {
+			fillQuoteImmediately();
+		}
+
 		const width  = 575,
 			height = 450,
 			left   = (window.innerWidth - width)/2,
