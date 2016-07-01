@@ -5,6 +5,7 @@ $author-size: 1.8em;
 	svg {
 		overflow: visible;
 		transition: 2s height;
+		min-height: 2em;
 	}
 
 	svg.text {
