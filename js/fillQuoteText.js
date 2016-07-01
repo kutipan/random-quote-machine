@@ -158,6 +158,10 @@ function onQuoteTextFilled() {
 
 function fillQuoteTextImmediately() {
 	clearInterval(quoteTextIntervalId);
+	svgTxt.style.transition = "none";
 	dynamicTxt.classList.remove("animated", "hidden", "dynamic");
+	// force reflow
+	svgTxt.getBBox();
+	svgTxt.style.transition = "";
 	onQuoteTextFilled();
 }
