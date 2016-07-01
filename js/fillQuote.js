@@ -82,10 +82,10 @@ function requestQuote() {
 
 	getQuote.classList.add("on");
 
-	AJAX.get({
-		url: 'https://andruxnet-random-famous-quotes.p.mashape.com/cat=famous',
+	AJAX({
+		url: 'https://andruxnet-random-famous-quotes.p.mashape.com/?cat=famous',
 		headers: {
-			"X-Mashape-Key": "OivH71yd3tmshl9YKzFH7BTzBVRQp1RaKLajsnafgL2aPsfP9V",
+			"X-Mashape-Key": "LAPt9A7eY1mshE4ecB0COT48Gt6dp1Dxa87jsnNrwQGgt96xMh",
 			"Accept": "application/json",
 			"Content-Type": "application/x-www-form-urlencoded"
 		}
@@ -93,7 +93,7 @@ function requestQuote() {
 }
 
 function quoteGetSuccess(result) {
-	console.log(JSON.parse(result), typeof result);
+	// console.log(JSON.parse(result), typeof result);
 	quote = JSON.parse(result);
 	fillQuote();
 }
@@ -104,6 +104,6 @@ function quoteGetError(error) {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
-	console.log("DOM fully loaded and parsed");
+	// console.log("DOM fully loaded and parsed");
 	requestQuote();
 });
