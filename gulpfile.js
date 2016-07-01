@@ -8,6 +8,8 @@ const jade = require('gulp-jade');
 const concat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
 const sourcemaps = require('gulp-sourcemaps');
+const gutil = require('gulp-util');
+const iife = require('gulp-iife');
 
 
 const src = {
@@ -67,6 +69,7 @@ gulp.task('javascript', function() {
 	return gulp.src(src.js)
 		.pipe(sourcemaps.init())
 		.pipe(concat('bundle.js'))
+		.pipe(gutil.env.production ? iife() : gutil.noop())
 		.pipe(sourcemaps.write('../maps'))
 		.pipe(gulp.dest(dist.js))
 		.pipe(browserSync.stream({once: true}));
