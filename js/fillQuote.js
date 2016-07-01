@@ -69,7 +69,7 @@ getQuote.onclick = requestQuote;
 // Messes up timing-dependent animations
 document.addEventListener("visibilitychange", function() {
 	if(document.visibilityState === "visible" && quoteBeingFilled) {
-		fillQuote();
+		fillQuoteImmediately();
 	}
 });
 
