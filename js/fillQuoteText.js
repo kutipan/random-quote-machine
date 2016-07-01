@@ -130,8 +130,7 @@ function startTextAnimations() {
 	quoteTextIntervalId = setInterval(startTspanAnimation, textCharAddFrequency);
 
 	function startTspanAnimation() {
-		// tspan.style.display = "unset";
-		// protect from button mashing -> events in quick succession
+		// protect from button mashing -> events firing off in quick succession
 		if(tspan) tspan = tspan.nextSibling;
 
 		if(tspan) tspan.style.display = "unset";
@@ -139,10 +138,6 @@ function startTextAnimations() {
 			clearInterval(quoteTextIntervalId);
 			startAuthorAnimations();
 		}
-		// if(!tspan) {
-		// 	clearInterval(quoteTextIntervalId);
-		// 	startAuthorAnimations();
-		// }
 	}
 }
 

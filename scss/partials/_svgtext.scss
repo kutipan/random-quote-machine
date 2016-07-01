@@ -21,7 +21,6 @@ $author-size: 1.8em;
 
 	text {
 		fill: none;
-		// stroke: black;
 		stroke-width: 2px;
 		font-family: CamBam-5;
 	}
@@ -53,13 +52,9 @@ $author-size: 1.8em;
 
 @keyframes dash {
 	from {
-		// stroke-dashoffset: $text-size * 9;
-		// stroke-dashoffset: 36rem;
 		stroke-dashoffset: 9em;
 	}
 	to {
-		// stroke-dashoffset: $text-size * 4.5;
-		// stroke-dashoffset: 18rem;
 		stroke-dashoffset: 4.5em;
 	}
 }
