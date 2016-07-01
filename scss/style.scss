@@ -17,8 +17,6 @@ $text-color: #655330;
 $body-color: #C9D8CF;
 $hr-color: #CDEFD0;
 
-@import url(https://fonts.googleapis.com/css?family=Montaga);
-
 html {
 	font-size: 16px;
 }
@@ -53,7 +51,6 @@ blockquote {
 	margin: 1em $inner-margin 2em;
 	color: $text-color;
 	stroke: $text-color;
-	font-family: 'Montaga', serif;
 }
 
 blockquote > .quote-text {

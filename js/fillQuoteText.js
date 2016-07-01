@@ -8,7 +8,7 @@ const svgTxt = document.getElementById("svg-output");
 const textCharAddFrequency = 120, initialSpaceWidthShift = -11;
 let quoteTextIntervalId,  quoteTextBeingFilled = false;
 
-let lastTextTspan, wordStartTspan, spaceWidthShift, svgWidth = svgTxt.getBoundingClientRect().width, stillFirstLine = false;;
+let lastTextTspan, wordStartTspan, spaceWidthShift, svgWidth = svgTxt.getBoundingClientRect().width, stillFirstLine = false;
 function addToDynamicTxt(tspan) {
 	const firstChar = tspan.textContent.charAt(0);
 	const secondChar = tspan.textContent.charAt(1);

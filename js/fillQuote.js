@@ -3,7 +3,6 @@
 
 const getQuote = document.getElementById("get-quote");
 
-const inputStr = "Today, I consider myself the luckiest man on", author = "Umberto Eco";
 const svgNS = "http://www.w3.org/2000/svg";
 let quote;
 
@@ -103,7 +102,7 @@ function quoteGetError(error) {
 	getQuote.classList.remove("on");
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function() {
 	// console.log("DOM fully loaded and parsed");
 	requestQuote();
 });
