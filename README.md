@@ -1,2 +1,2 @@
 # Random Quote Generator
-An simple random quote generator made as part of FreeCodeCamp course.
+A simple random quote generator made as part of FreeCodeCamp course.
