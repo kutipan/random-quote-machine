@@ -6,10 +6,13 @@ const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const jade = require('gulp-jade');
 const concat = require('gulp-concat');
-const imagemin = require('gulp-imagemin');
 const sourcemaps = require('gulp-sourcemaps');
 const gutil = require('gulp-util');
 const iife = require('gulp-iife');
+const uglify = require('gulp-uglify');
+const babel = require('gulp-babel');
+const del = require('del');
+const runSequence = require('run-sequence');
 
 
 const src = {
@@ -17,19 +20,17 @@ const src = {
 	scssPartials: 'scss/partials/*.scss',
 	jade: '*.jade',
 	jadePartials: 'partials/*jade',
-	js: 'js/*.js',
-	img: 'images/*'
+	js: 'js/*.js'
 };
 
 const dist = {
 	base: 'dist',
 	css: 'dist/css',
-	js: 'dist/js',
-	img: 'dist/images'
+	js: 'dist/js'
 };
 
 // Static Server + watching scss/jade files
-gulp.task('serve', ['sass', 'jade', 'javascript', 'images'], function() {
+gulp.task('serve', ['sass', 'jade', 'javascript'], function() {
 	browserSync.init({
 		server: {
 			baseDir: dist.base
@@ -76,12 +77,36 @@ gulp.task('javascript', function() {
 });
 
 
-// Compress images
-gulp.task('images', function () {
-	return gulp.src(src.img)
-		.pipe(imagemin())
-		.pipe(gulp.dest(dist.img));
+gulp.task('default', ['serve']);
+
+gulp.task('clean', function(){
+	return del('dist');
 });
 
+gulp.task('build', function(callback) {
+	runSequence('clean', ['sass', 'jade', 'javascript-pub'], callback);
+});
 
-gulp.task('default', ['serve']);
+// Make publish-ready
+gulp.task('javascript-pub', function() {
+	const uglifyOptions = {compress: {drop_console: true}};
+
+	return gulp.src(src.js)
+		.pipe(sourcemaps.init())
+		.pipe(concat('bundle.js'))
+		.pipe(babel({ presets: ['es2015'] }))
+		.pipe(iife())
+		.pipe(uglify(uglifyOptions))
+		.pipe(sourcemaps.write('../maps'))
+		.pipe(gulp.dest(dist.js))
+		.pipe(browserSync.stream({once: true}));
+});
+
+// publish to gh-pages
+
+const ghPages = require('gulp-gh-pages');
+
+gulp.task('publish', ['build'], function() {
+	return gulp.src('./dist/**/*')
+    .pipe(ghPages());
+});
